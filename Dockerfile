@@ -10,6 +10,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # unminimize for support man-db
 RUN dpkg --add-architecture i386                                    \
+    && dpkg --add-architecture arm64                                \
     && apt-get update                                               \
     && apt-get install -y --no-install-recommends                   \
 # apt utils and man-db \
@@ -33,7 +34,7 @@ RUN dpkg --add-architecture i386                                    \
         # with glibc \
         gcc-riscv64-linux-gnu g++-riscv64-linux-gnu                 \
         # with newlib \
-        gcc-riscv64-unknown-elf g++-riscv64-linux-gnu               \
+        gcc-riscv64-unknown-elf                                     \
 # linux kernel compile tools \
         git fakeroot libncurses-dev xz-utils libssl-dev bc flex     \
         libelf-dev bison gawk openssl dkms libudev-dev libpci-dev   \
@@ -49,6 +50,8 @@ RUN dpkg --add-architecture i386                                    \
         dos2unix gnupg zip unzip ssh-client lrzsz                   \
 # i386 runtime \
         libc6:i386 libstdc++6:i386 zlib1g:i386                      \
+# arm64 runtime \
+        libc6:arm64 libstdc++6:arm64 zlib1g:arm64                   \
 # clean \
     && apt-get clean                                                \
     && (rm -rf /var/lib/apt/lists/*                                 \
@@ -83,7 +86,7 @@ WORKDIR ${WORKDIR}
 RUN cp --preserve=mode,timestamps /etc/skel/.[!.]* ~/               \
     && sed -i 's/^\(\s*\)#alias\b/\1alias/g' ~/.bashrc
 
-RUN git clone https://github.com/Ir1Ka/docker-vim-ycm.git          \
+RUN git clone https://github.com/Ir1Ka/docker-vim-ycm.git           \
         /tmp/vim-ycm                                                \
     && (cd /tmp/vim-ycm/ && cp .vimrc home-cfg/.[!.]* ~/)           \
     && rm -rf /tmp/vim-ycm
