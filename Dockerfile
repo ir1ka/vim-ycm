@@ -2,10 +2,6 @@ ARG TAG=latest
 
 FROM debian:${TAG}
 
-ARG USER UID GROUPS
-ARG GROUP GID
-ARG WORKDIR=/work
-
 ARG DEBIAN_FRONTEND=noninteractive
 
 # unminimize for support man-db
@@ -66,41 +62,43 @@ RUN dpkg --add-architecture i386                                    \
 # python3 as default python \
 #    && ln -sfT python3 /usr/bin/python
 
-RUN ( [ -z "${GROUP}" ] || groupadd ${GID:+--gid ${GID}} --non-unique ${GROUP} ) \
-    && useradd ${GROUP:+--gid ${GROUP} --no-user-group}             \
-               ${GROUPS:+--groups ${GROUPS}}                        \
-               ${UID:+--uid ${UID} --non-unique}                    \
+ARG PUSER PUID PGROUPS
+ARG PGROUP PGID
+ARG WORKDIR=/work
+
+RUN ( [ -z "${PGROUP}" ] || groupadd ${PGID:+--gid ${PGID}}         \
+                                     --non-unique ${PGROUP} )       \
+    && useradd ${PGROUP:+--gid ${PGROUP} --no-user-group}           \
+               ${PGROUPS:+--groups ${PGROUPS}}                      \
+               ${PUID:+--uid ${PUID} --non-unique}                  \
                --skel /et/skel                                      \
                --create-home                                        \
                --shell /bin/bash                                    \
-               ${USER}                                              \
+               ${PUSER}                                             \
     && install --directory                                          \
                --mode=0755                                          \
-               --owner=${USER}                                      \
-               --group=${GROYP:-${USER}}                            \
+               --owner=${PUSER}                                     \
+               --group=${PGROUP:-${PUSER}}                          \
                ${WORKDIR}
 
-USER ${USER}
-WORKDIR ${WORKDIR}
+USER ${PUSER}
 
 RUN cp --preserve=mode,timestamps /etc/skel/.[!.]* ~/               \
-    && sed -i 's/^\(\s*\)#alias\b/\1alias/g' ~/.bashrc
-
-RUN git clone https://github.com/Ir1Ka/docker-vim-ycm.git           \
-        /tmp/vim-ycm                                                \
+    && sed -i 's/^\(\s*\)#alias\b/\1alias/g' ~/.bashrc              \
+# clone \
+    && git clone https://github.com/Ir1Ka/docker-vim-ycm.git        \
+           /tmp/vim-ycm                                             \
     && (cd /tmp/vim-ycm/ && cp .vimrc home-cfg/.[!.]* ~/)           \
-    && rm -rf /tmp/vim-ycm
-
-# install vim plugin and compile ycm
-RUN git clone https://github.com/VundleVim/Vundle.vim.git           \
-        ~/.vim/bundle/Vundle.vim                                    \
+    && rm -rf /tmp/vim-ycm                                          \
+# install vim plugin and compile ycm \
+    && git clone https://github.com/VundleVim/Vundle.vim.git        \
+           ~/.vim/bundle/Vundle.vim                                 \
     && echo "Vundle plugin installing ..."                          \
     && echo | vim +PluginInstall +qall >/dev/null 2>&1              \
     && (cd ~/.vim/bundle/YouCompleteMe && python3 install.py --all) \
-    && rm -rf ~/.cache
-
-# environments
-RUN sed -i 's|^\(set undodir=\)~\(/.undo_history.*\)$|\1'"${WORKDIR}"'\2|g' \
+    && rm -rf ~/.cache                                              \
+# environments \
+    && sed -i 's|^\(set undodir=\)~\(/.undo_history.*\)$|\1'"${WORKDIR}"'\2|g' \
            ~/.vimrc                                                 \
     && sed -i '$a\\nset viminfofile='"${WORKDIR}"'/.viminfo'        \
            ~/.vimrc                                                 \
@@ -114,8 +112,11 @@ RUN sed -i 's|^\(set undodir=\)~\(/.undo_history.*\)$|\1'"${WORKDIR}"'\2|g' \
             fi;                                                     \
         fi;                                                         \
     done                                                            \
-    && rm -f ~/.*-append
-
-RUN ln -sf ${WORKDIR}/.gitconfig ~/
+    && rm -f ~/.*-append                                            \
+    && ln -sf ${WORKDIR}/.gitconfig ~/
 
 ENV LANG C.UTF-8
+WORKDIR ${WORKDIR}
+VOLUME ${WORKDIR}
+
+CMD [ "bash", "-" ]

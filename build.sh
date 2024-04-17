@@ -8,7 +8,7 @@ fi
 
 exec docker build -t ir1ka/vim-ycm${tag:+:${tag}} \
                   --build-arg TAG=12 \
-                  --build-arg USER=$USER \
-                  --build-arg UID=$UID \
+                  --build-arg PUSER=$USER \
+                  --build-arg PUID=$UID \
                   --pull \
             ${CURR_DIR}
