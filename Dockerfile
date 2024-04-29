@@ -7,6 +7,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 # unminimize for support man-db
 RUN dpkg --add-architecture i386                                    \
     && dpkg --add-architecture arm64                                \
+    && sed -i 's@^\(Components: .*\)$@\1 contrib non-free@g'        \
+           /etc/apt/sources.list.d/debian.sources                   \
     && apt-get update                                               \
     && apt-get install -y --no-install-recommends                   \
 # apt utils and man-db \
@@ -18,6 +20,7 @@ RUN dpkg --add-architecture i386                                    \
 # develop \
         ninja-build automake libtool gdb gettext                    \
         gnu-standards autopoint                                     \
+        python-is-python3 repo                                      \
 # cross aarch64/arm64 \
         gcc-aarch64-linux-gnu g++-aarch64-linux-gnu                 \
 # cross arm \
@@ -58,9 +61,7 @@ RUN dpkg --add-architecture i386                                    \
 #        [ -d $dir ] && sed -i 's/[[:space:]]*Dir::Cache::\(src\)\?pkgcache "";[[:space:]]*//g' $dir/*)  \
 # do not clean APT cache \
 #    && (f=/etc/apt/apt.conf.d/docker-clean;                         \
-#        [ -f $f ] && sed -i 's? /var/cache/apt/\*\.bin??g' $f)      \
-# python3 as default python \
-#    && ln -sfT python3 /usr/bin/python
+#        [ -f $f ] && sed -i 's? /var/cache/apt/\*\.bin??g' $f)
 
 ARG PUSER PUID PGROUPS
 ARG PGROUP PGID
