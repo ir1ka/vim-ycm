@@ -1,3 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
-exec docker exec -it vim-ycm bash -
+: "${NAME:=vim-ycm}"
+exec docker exec -it ${NAME} bash -

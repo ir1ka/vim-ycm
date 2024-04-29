@@ -1,10 +1,13 @@
-#!/bin/bash
+#!/bin/sh
 
-docker rm --force vim-ycm 2>/dev/null
+: "${NAME:=vim-ycm}"
+
+docker rm --force ${NAME} 2>/dev/null
 exec docker run -d                          \
                 --restart unless-stopped    \
                 --init                      \
                 --env TERM=xterm-color      \
                 --volume "${HOME}":/work:rw \
-                --name vim-ycm              \
+                --hostname ${NAME}          \
+                --name ${NAME}              \
             ir1ka/vim-ycm:latest tail -f /dev/null
