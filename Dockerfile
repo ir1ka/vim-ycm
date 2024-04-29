@@ -113,9 +113,9 @@ RUN cp --preserve=mode,timestamps /etc/skel/.[!.]* ~/               \
             fi;                                                     \
         fi;                                                         \
     done                                                            \
-    && rm -f ~/.*-append                                            \
-    && ln -sf ${WORKDIR}/.gitconfig ~/
+    && rm -f ~/.*-append
 
+ENV XDG_CONFIG_HOME ${WORKDIR}
 ENV LANG C.UTF-8
 WORKDIR ${WORKDIR}
 VOLUME ${WORKDIR}

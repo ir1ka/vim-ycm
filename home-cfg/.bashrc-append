@@ -35,10 +35,15 @@ PS1="${PS1//\\w/\$(shorten_path \"\\w\")}"
 # repo自动更新地址
 #export REPO_URL='https://gerrit-googlesource.proxy.ustclug.org/git-repo'
 
-[[ -d "$HOME/bin" ]] && ! [[ "$PATH" =~ "$HOME/bin:" ]] && export PATH=$HOME/bin:$PATH
+[ ! -d "$HOME/bin" ] || [[ "$PATH" =~ "$HOME/bin:" ]] || export PATH=$HOME/bin:$PATH
+[ ! -d "${XDG_CONFIG_HOME}/bin" ] || [[ "$PATH" =~ "${XDG_CONFIG_HOME}/bin:" ]] || \
+    export PATH="${XDG_CONFIG_HOME}/bin:$PATH"
+
+[ -e $HOME/.ssh ] || [ ! -d "${XDG_CONFIG_HOME}/.ssh" ] || \
+    ln -sfT "${XDG_CONFIG_HOME}/.ssh" $HOME/.ssh
 
 # For Android SDK
-[[ -d "$HOME/Android/Sdk" ]] && [[ -f "$HOME/Android/.sdkrc" ]] && . "$HOME/Android/.sdkrc"
+! [ -r "$HOME/Android/.sdkrc" ] || source "$HOME/Android/.sdkrc"
 
 #export USE_CCACHE=1
 #export CCACHE_DIR=$HOME/.ccache
