@@ -21,6 +21,7 @@ RUN dpkg --add-architecture i386                                    \
         ninja-build automake libtool gdb gettext                    \
         gnu-standards autopoint                                     \
         python-is-python3 repo                                      \
+        libnuma-dev                                                 \
 # cross aarch64/arm64 \
         gcc-aarch64-linux-gnu g++-aarch64-linux-gnu                 \
 # cross arm \
