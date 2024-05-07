@@ -65,6 +65,7 @@ RUN dpkg --add-architecture i386                                    \
 #        [ -f $f ] && sed -i 's? /var/cache/apt/\*\.bin??g' $f)
 
 ARG PUSER PUID PGROUPS
+ARG PHOME=/home/${PUSER}
 ARG PGROUP PGID
 ARG WORKDIR=/work
 
@@ -74,6 +75,7 @@ RUN ( [ -z "${PGROUP}" ] || groupadd ${PGID:+--gid ${PGID}}         \
                ${PGROUPS:+--groups ${PGROUPS}}                      \
                ${PUID:+--uid ${PUID} --non-unique}                  \
                --skel /et/skel                                      \
+               --home-dir ${PHOME}                                  \
                --create-home                                        \
                --shell /bin/bash                                    \
                ${PUSER}                                             \
@@ -120,5 +122,7 @@ ENV XDG_CONFIG_HOME ${WORKDIR}
 ENV LANG C.UTF-8
 WORKDIR ${WORKDIR}
 VOLUME ${WORKDIR}
+
+VOLUME ${PHOME}/.bash_history
 
 CMD [ "bash", "-" ]
