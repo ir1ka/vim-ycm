@@ -22,6 +22,9 @@ RUN dpkg --add-architecture i386                                    \
         gnu-standards autopoint                                     \
         python-is-python3 repo                                      \
         libnuma-dev                                                 \
+        libcunit1-dev libgnutls28-dev                               \
+# RDMA develop \
+        libibverbs-dev librdmacm-dev                                \
 # cross aarch64/arm64 \
         gcc-aarch64-linux-gnu g++-aarch64-linux-gnu                 \
 # cross arm \
@@ -48,6 +51,7 @@ RUN dpkg --add-architecture i386                                    \
         subversion git-svn git-cvs exuberant-ctags cscope           \
         coreutils curl wget less file tree                          \
         dos2unix gnupg zip unzip ssh-client lrzsz                   \
+        python3-venv                                                \
 # i386 runtime \
         libc6:i386 libstdc++6:i386 zlib1g:i386                      \
 # arm64 runtime \
