@@ -122,8 +122,8 @@ RUN cp --preserve=mode,timestamps /etc/skel/.[!.]* ~/               \
     done                                                            \
     && rm -f ~/.*-append
 
-ENV XDG_CONFIG_HOME ${WORKDIR}
-ENV LANG C.UTF-8
+ENV XDG_CONFIG_HOME=${WORKDIR}
+ENV LANG=C.UTF-8
 WORKDIR ${WORKDIR}
 VOLUME ${WORKDIR}
 
