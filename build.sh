@@ -4,7 +4,7 @@ set -e
 : "${PUSER:=${USER}}"
 : "${PUID:=${UID}}"
 : "${WORKDIR:=/work}"
-: "${TAG:=12}"
+: "${TAG:=}"
 
 CURR_DIR="$(dirname "${BASH_SOURCE[0]}")"
 
@@ -13,7 +13,7 @@ if [ $# -gt 0 ]; then
 fi
 
 exec docker build -t ir1ka/vim-ycm${tag:+:${tag}} \
-                  --build-arg TAG=${TAG} \
+                  ${TAG:+--build-arg TAG=${TAG}} \
                   --build-arg PUSER=${PUSER} \
                   --build-arg PUID=${PUID} \
                   --build-arg WORKDIR=${WORKDIR} \

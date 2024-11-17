@@ -1,4 +1,6 @@
 #!/bin/sh
 
 : "${NAME:=vim-ycm}"
-exec docker exec -it ${NAME} bash -
+: "${PUSER:=${USER}}"
+
+exec docker exec -it ${NAME} bash -c "exec -l bash"

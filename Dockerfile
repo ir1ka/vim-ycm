@@ -1,14 +1,16 @@
 ARG TAG=latest
+ARG DISTRO=ubuntu
 
-FROM debian:${TAG}
+FROM ${DISTRO}:${TAG}
 
+ARG DISTRO
 ARG DEBIAN_FRONTEND=noninteractive
 
 # unminimize for support man-db
-RUN dpkg --add-architecture i386                                    \
-    && dpkg --add-architecture arm64                                \
-    && sed -i 's@^\(Components: .*\)$@\1 contrib non-free@g'        \
-           /etc/apt/sources.list.d/debian.sources                   \
+RUN sed -E -i 's/^(\s*Components:.*)$/\1 contrib non-free/g'        \
+           /etc/apt/sources.list.d/${DISTRO}.sources                \
+#    && dpkg --add-architecture i386                                 \
+#    && dpkg --add-architecture arm64                                \
     && apt-get update                                               \
     && apt-get install -y --no-install-recommends                   \
 # apt utils and man-db \
@@ -25,6 +27,8 @@ RUN dpkg --add-architecture i386                                    \
         libcunit1-dev libgnutls28-dev                               \
 # RDMA develop \
         libibverbs-dev librdmacm-dev                                \
+# clang \
+        clang clang-format clang-tidy clang-tools clangd            \
 # cross aarch64/arm64 \
         gcc-aarch64-linux-gnu g++-aarch64-linux-gnu                 \
 # cross arm \
@@ -51,16 +55,22 @@ RUN dpkg --add-architecture i386                                    \
         subversion git-svn git-cvs exuberant-ctags cscope           \
         coreutils curl wget less file tree                          \
         dos2unix gnupg zip unzip ssh-client lrzsz                   \
-        python3-venv                                                \
+        python3-full python3-venv                                   \
 # i386 runtime \
-        libc6:i386 libstdc++6:i386 zlib1g:i386                      \
+#        libc6:i386 libstdc++6:i386 zlib1g:i386                      \
 # arm64 runtime \
-        libc6:arm64 libstdc++6:arm64 zlib1g:arm64                   \
+#        libc6:arm64 libstdc++6:arm64 zlib1g:arm64                   \
+# python3 venv \
+    && python3 -m venv /venv                                        \
+    && /venv/bin/python3 -m pip install --no-cache-dir compiledb    \
 # clean \
     && apt-get clean                                                \
-    && (rm -rf /var/lib/apt/lists/*                                 \
-        /var/tmp/* /var/tmp/.[!.]*                                  \
-        /tmp/* /tmp/.[!.]* || true)
+    && rm -rf /var/lib/apt/lists/*                                  \
+              /var/tmp/*                                            \
+              /var/tmp/.[!.]*                                       \
+              /tmp/*                                                \
+              /tmp/.[!.]*                                           \
+              /root/.cache
 # restore bash completion for apt \
 #    && (dir=/etc/apt/apt.conf.d;                                    \
 #        [ -d $dir ] && sed -i 's/[[:space:]]*Dir::Cache::\(src\)\?pkgcache "";[[:space:]]*//g' $dir/*)  \
@@ -75,24 +85,32 @@ ARG WORKDIR=/work
 
 RUN ( [ -z "${PGROUP}" ] || groupadd ${PGID:+--gid ${PGID}}         \
                                      --non-unique ${PGROUP} )       \
-    && useradd ${PGROUP:+--gid ${PGROUP} --no-user-group}           \
+    &&                                                              \
+    (if test -n "${PUID}" && id -un ${PUID}; then                   \
+       usermod --move-home                                          \
+               --home ${PHOME}                                      \
+               --login ${PUSER}                                     \
+               $(id -un ${PUID});                                   \
+     else                                                           \
+       useradd ${PGROUP:+--gid ${PGROUP} --no-user-group}           \
                ${PGROUPS:+--groups ${PGROUPS}}                      \
                ${PUID:+--uid ${PUID} --non-unique}                  \
                --skel /et/skel                                      \
                --home-dir ${PHOME}                                  \
                --create-home                                        \
                --shell /bin/bash                                    \
-               ${PUSER}                                             \
+               ${PUSER};                                            \
+     fi)                                                            \
     && install --directory                                          \
                --mode=0755                                          \
                --owner=${PUSER}                                     \
-               --group=${PGROUP:-${PUSER}}                          \
+               --group=${PGROUP:-$(id -gn ${PUSER})}                \
                ${WORKDIR}
 
 USER ${PUSER}
 
 RUN cp --preserve=mode,timestamps /etc/skel/.[!.]* ~/               \
-    && sed -i 's/^\(\s*\)#alias\b/\1alias/g' ~/.bashrc              \
+    && sed -E -i 's/^(\s*)#\s*(alias\s+)/\1\2/g' ~/.bashrc          \
 # clone \
     && git clone https://github.com/Ir1Ka/docker-vim-ycm.git        \
            /tmp/vim-ycm                                             \
@@ -129,4 +147,4 @@ VOLUME ${WORKDIR}
 
 VOLUME ${PHOME}/.bash_history
 
-CMD [ "bash", "-" ]
+CMD [ "bash", "-c", "exec -l bash" ]
