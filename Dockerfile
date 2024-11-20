@@ -56,6 +56,9 @@ RUN sed -E -i 's/^(\s*Components:.*)$/\1 contrib non-free/g'        \
         coreutils curl wget less file tree                          \
         dos2unix gnupg zip unzip ssh-client lrzsz                   \
         python3-full python3-venv                                   \
+        python3-setuptools python3-stdeb                            \
+        python3-distutils-extra python3-pyqt-distutils              \
+        python3-distlib                                             \
 # i386 runtime \
 #        libc6:i386 libstdc++6:i386 zlib1g:i386                      \
 # arm64 runtime \
