@@ -85,7 +85,9 @@ RUN true                                                            \
 #    && (f=/etc/apt/apt.conf.d/docker-clean;                         \
 #        [ -f $f ] && sed -i 's? /var/cache/apt/\*\.bin??g' $f)
 
-ARG PUSER PUID PGROUPS
+ARG PUSER=builder
+ARG PUID=1000
+ARG PGROUPS
 ARG PHOME=/home/${PUSER}
 ARG PGROUP PGID
 ARG WORKDIR=/work
