@@ -7,14 +7,18 @@ ARG DISTRO
 ARG DEBIAN_FRONTEND=noninteractive
 
 # unminimize for support man-db
-RUN sed -E -i 's/^(\s*Components:.*)$/\1 contrib non-free/g'        \
-           /etc/apt/sources.list.d/${DISTRO}.sources                \
+RUN true                                                            \
+#    && sed -E -i 's/^(\s*Components:.*)$/\1 contrib non-free/g'     \
+#           /etc/apt/sources.list.d/${DISTRO}.sources                \
 #    && dpkg --add-architecture i386                                 \
 #    && dpkg --add-architecture arm64                                \
     && apt-get update                                               \
     && apt-get install -y --no-install-recommends                   \
 # apt utils and man-db \
         apt-utils man-db                                            \
+        ubuntu-minimal                                              \
+        unminimize                                                  \
+    && (yes | unminimize)                                           \
     && apt-get install -y --no-install-recommends                   \
 # vim and ycm's dependency library \
         build-essential cmake vim-nox python3-dev                   \
