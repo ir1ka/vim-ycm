@@ -55,7 +55,7 @@ RUN true                                                            \
 # RT-Thread compile tools \
         scons python3-requests                                      \
 # openCL and X11 devel \
-        libx11-dev                                                  \
+        libx11-dev mesa-common-dev                                  \
 # tools \
         bash-completion iproute2 iputils-ping                       \
         subversion git-svn git-cvs exuberant-ctags cscope           \
