@@ -14,5 +14,5 @@ The image
 ## build image
 
 ``` shell
-PUSER=$(id -un) PUID=$(id -u) WORKDIR=$HOME./build.sh
+PUSER=$(id -un) PUID=$(id -u) WORKDIR=$HOME ./build.sh
 ```
