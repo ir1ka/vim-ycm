@@ -3,8 +3,6 @@ ARG DISTRO=ubuntu
 
 FROM ${DISTRO}:${TAG}
 
-LABEL org.opencontainers.image.source = "https://github.com/ir1ka/docker-vim-ycm"
-
 ARG DISTRO
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -161,3 +159,5 @@ VOLUME ${WORKDIR}
 VOLUME ${PHOME}/.bash_history
 
 CMD [ "bash", "-c", "exec -l bash" ]
+
+LABEL org.opencontainers.image.source="https://github.com/ir1ka/docker-vim-ycm"
