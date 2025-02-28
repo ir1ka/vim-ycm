@@ -3,6 +3,8 @@ ARG DISTRO=ubuntu
 
 FROM ${DISTRO}:${TAG}
 
+LABEL org.opencontainers.image.source = "https://github.com/ir1ka/docker-vim-ycm"
+
 ARG DISTRO
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -154,8 +156,8 @@ RUN cp --preserve=mode,timestamps /etc/skel/.[!.]* ~/               \
 ENV XDG_CONFIG_HOME=${WORKDIR}
 ENV LANG=C.UTF-8
 WORKDIR ${WORKDIR}
-VOLUME ${WORKDIR}
 
+VOLUME ${WORKDIR}
 VOLUME ${PHOME}/.bash_history
 
 CMD [ "bash", "-c", "exec -l bash" ]
