@@ -54,6 +54,8 @@ RUN true                                                            \
         cpio rsync                                                  \
 # RT-Thread compile tools \
         scons python3-requests                                      \
+# openCL and X11 devel \
+        libx11-dev                                                  \
 # tools \
         bash-completion iproute2 iputils-ping                       \
         subversion git-svn git-cvs exuberant-ctags cscope           \
@@ -85,10 +87,10 @@ RUN true                                                            \
 #    && (f=/etc/apt/apt.conf.d/docker-clean;                         \
 #        [ -f $f ] && sed -i 's? /var/cache/apt/\*\.bin??g' $f)
 
-ARG PUSER=builder
+ARG PUSER=coder
 ARG PUID=1000
 ARG PGROUPS
-ARG PHOME=/home/${PUSER}
+ARG PHOME=/config
 ARG PGROUP PGID
 ARG WORKDIR=/work
 
