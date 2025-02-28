@@ -1,9 +1,8 @@
 #!/bin/sh
 
 : "${NAME:=vim-ycm}"
-: "${WORKDIR:=/work}"
-: "${PUSER:=${USER}}"
-: "${PHOME=/home/${PUSER}}"
+: "${WORKDIR:=${HOME}}"
+: "${PHOME=/config}"
 
 if [ $# -gt 0 ]; then
     tag=$1
@@ -16,6 +15,7 @@ exec docker run -d                                                              
                 --restart unless-stopped                                        \
                 --init                                                          \
                 --env TERM=xterm-color                                          \
+                --workdir "${WORKDIR}"                                          \
                 --volume "${HOME}":"${WORKDIR}":rw                              \
                 --volume "${HOME}/.bash_history":"${PHOME}/.bash_history:rw"    \
                 --hostname ${NAME}                                              \
