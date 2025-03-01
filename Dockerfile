@@ -154,7 +154,8 @@ WORKDIR ${WORKDIR}
 VOLUME ${WORKDIR}
 VOLUME ${PHOME}/.bash_history
 
-CMD [ "bash", "-c", "exec -l bash" ]
+COPY --chown=root:root --chmod=0755 ./entrypoint.sh /
+ENTRYPOINT [ "/entrypoint.sh" ]
 
 LABEL org.opencontainers.image.source="https://github.com/ir1ka/docker-vim-ycm"
 LABEL org.opencontainers.image.description="vim with ycmd container image"
