@@ -35,9 +35,11 @@ PS1="${PS1//\\w/\$(shorten_path \"\\w\")}"
 # repo自动更新地址
 #export REPO_URL='https://gerrit-googlesource.proxy.ustclug.org/git-repo'
 
-[ ! -d "$HOME/bin" ] || [[ "$PATH" =~ "$HOME/bin:" ]] || export PATH=$HOME/bin:$PATH
-[ ! -d "${XDG_CONFIG_HOME}/bin" ] || [[ "$PATH" =~ "${XDG_CONFIG_HOME}/bin:" ]] || \
+[[ "$PATH" =~ "$HOME/bin:" ]] || export PATH=$HOME/bin:$PATH
+[[ "$PATH" =~ "${XDG_CONFIG_HOME}/bin:" ]] || \
     export PATH="${XDG_CONFIG_HOME}/bin:$PATH"
+[[ "$PATH" =~ "${XDG_CONFIG_HOME}/.local/bin:" ]] || \
+    export PATH="${XDG_CONFIG_HOME}/.local/bin:$PATH"
 
 [ -e $HOME/.ssh ] || [ ! -d "${XDG_CONFIG_HOME}/.ssh" ] || \
     ln -sfT "${XDG_CONFIG_HOME}/.ssh" $HOME/.ssh

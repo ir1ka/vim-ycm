@@ -22,6 +22,7 @@ exec docker run -d                                                              
                 --restart unless-stopped                                        \
                 --init                                                          \
                 --env TERM=xterm-color                                          \
+                --end XDG_CONFIG_HOME="${WORKDIR}"                              \
                 --workdir "${WORKDIR}"                                          \
                 --volume "${HOME}":"${WORKDIR}"                                 \
                 --volume "${VIM_YCM_CONFIG}/bash_history":"${PHOME}/.bash_history" \
