@@ -135,10 +135,6 @@ RUN cp --preserve=mode,timestamps /etc/skel/.[!.]* ~/               \
     && (cd ~/.vim/bundle/YouCompleteMe && python3 install.py --all) \
     && rm -rf ~/.cache                                              \
 # environments \
-    && sed -i 's|^\(set undodir=\)~\(/.undo_history.*\)$|\1'"${WORKDIR}"'\2|g' \
-           ~/.vimrc                                                 \
-    && sed -i '$a\\nset viminfofile='"${WORKDIR}"'/.viminfo'        \
-           ~/.vimrc                                                 \
     && for f in ~/.*-append; do                                     \
         _f=${f%-append};                                            \
         if [ -r "${f}" ]; then                                      \
