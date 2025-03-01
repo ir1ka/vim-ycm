@@ -8,7 +8,7 @@ VIM_YCM_CONFIG="${WORKDIR}/.vim-ycm"
 VIMRC=${HOME}/.vimrc
 
 VIMINFO_PREFIX="set viminfofile="
-VIMINFO_SUFFIX="/.viminfo"
+VIMINFO_SUFFIX="/viminfo"
 PATTERN="(^${VIMINFO_PREFIX}).*(${VIMINFO_SUFFIX}$)"
 if grep -qE "${PATTERN}" ${VIMRC}; then
     sed -i -E 's|'"${PATTERN}"'|\1'"${VIM_YCM_CONFIG}"'\2|g' ${VIMRC}
