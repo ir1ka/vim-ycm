@@ -161,3 +161,5 @@ VOLUME ${PHOME}/.bash_history
 CMD [ "bash", "-c", "exec -l bash" ]
 
 LABEL org.opencontainers.image.source="https://github.com/ir1ka/docker-vim-ycm"
+LABEL org.opencontainers.image.description="vim with ycmd container image"
+LABEL org.opencontainers.image.licenses=MIT
