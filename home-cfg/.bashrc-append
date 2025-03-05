@@ -111,3 +111,5 @@ for DOT_RC in "${DOT_RCS[@]}"; do
     [[ -f "$DOT_CUR_DIR"/"$DOT_RC" ]] && source "$DOT_CUR_DIR"/"$DOT_RC"
 done
 unset DOT_RC DOT_RCS DOT_CUR_DIR
+
+source ~/.venv/bin/activate

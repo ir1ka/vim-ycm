@@ -69,9 +69,6 @@ RUN true                                                            \
 #        libc6:i386 libstdc++6:i386 zlib1g:i386                      \
 # arm64 runtime \
 #        libc6:arm64 libstdc++6:arm64 zlib1g:arm64                   \
-# python3 venv \
-    && python3 -m venv /venv                                        \
-    && /venv/bin/python3 -m pip install --no-cache-dir compiledb    \
 # clean \
     && apt-get clean                                                \
     && rm -rf /var/lib/apt/lists/*                                  \
@@ -131,7 +128,7 @@ RUN cp --preserve=mode,timestamps /etc/skel/.[!.]* ~/               \
     && git clone https://github.com/VundleVim/Vundle.vim.git        \
            ~/.vim/bundle/Vundle.vim                                 \
     && echo "Vundle plugin installing ..."                          \
-    && echo | vim +PluginInstall +qall >/dev/null 2>&1              \
+    && (yes '' | vim +PluginInstall +qall >/dev/null 2>&1)          \
     && (cd ~/.vim/bundle/YouCompleteMe && python3 install.py --all) \
     && rm -rf ~/.cache                                              \
 # environments \
@@ -145,7 +142,10 @@ RUN cp --preserve=mode,timestamps /etc/skel/.[!.]* ~/               \
             fi;                                                     \
         fi;                                                         \
     done                                                            \
-    && rm -f ~/.*-append
+    && rm -f ~/.*-append                                            \
+# python3 venv \
+    && python3 -m venv ~/.venv                                      \
+    && ~/.venv/bin/python3 -m pip install --no-cache-dir compiledb
 
 ENV XDG_CONFIG_HOME=${WORKDIR}
 ENV LANG=C.UTF-8
