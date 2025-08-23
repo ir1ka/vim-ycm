@@ -120,7 +120,7 @@ USER ${PUSER}
 RUN cp --preserve=mode,timestamps /etc/skel/.[!.]* ~/               \
     && sed -E -i 's/^(\s*)#\s*(alias\s+)/\1\2/g' ~/.bashrc          \
 # clone \
-    && git clone https://github.com/Ir1Ka/docker-vim-ycm.git        \
+    && git clone https://github.com/ir1ka/vim-ycm.git               \
            /tmp/vim-ycm                                             \
     && (cd /tmp/vim-ycm/ && cp .vimrc home-cfg/.[!.]* ~/)           \
     && rm -rf /tmp/vim-ycm                                          \
