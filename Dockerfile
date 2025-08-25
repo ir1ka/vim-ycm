@@ -37,6 +37,7 @@ RUN true                                                            \
         gcc-aarch64-linux-gnu g++-aarch64-linux-gnu                 \
 # cross arm \
         gcc-arm-linux-gnueabi g++-arm-linux-gnueabi                 \
+        gcc-arm-none-eabi                                           \
 # cross armhf \
         gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf             \
 # cross mips64 \
@@ -56,6 +57,8 @@ RUN true                                                            \
         scons python3-requests                                      \
 # openCL and X11 devel \
         libx11-dev mesa-common-dev                                  \
+# qemu \
+        libglib2.0-dev libpixman-1-dev libepoxy-dev                 \
 # tools \
         bash-completion iproute2 iputils-ping                       \
         subversion git-svn git-cvs exuberant-ctags cscope           \
@@ -64,7 +67,9 @@ RUN true                                                            \
         python3-full python3-venv                                   \
         python3-setuptools python3-stdeb                            \
         python3-distutils-extra python3-pyqt-distutils              \
-        python3-distlib                                             \
+        python3-distlib python3-pyelftools                          \
+        dosfstools mtools swig                                      \
+        jq                                                          \
 # i386 runtime \
 #        libc6:i386 libstdc++6:i386 zlib1g:i386                      \
 # arm64 runtime \
@@ -145,17 +150,27 @@ RUN cp --preserve=mode,timestamps /etc/skel/.[!.]* ~/               \
     && rm -f ~/.*-append                                            \
 # python3 venv \
     && python3 -m venv ~/.venv                                      \
-    && ~/.venv/bin/python3 -m pip install --no-cache-dir compiledb
+    && ~/.venv/bin/python3 -m pip install --no-cache-dir            \
+        setuptools pyelftools pyqt-distutils distlib stdeb requests \
+        distutils-extra-python                                      \
+        compiledb
 
+ENV TERM=xterm-color
 ENV XDG_CONFIG_HOME=${WORKDIR}
 ENV LANG=C.UTF-8
-WORKDIR ${WORKDIR}
 
-VOLUME ${WORKDIR}
-VOLUME ${PHOME}/.bash_history
+WORKDIR ${WORKDIR}
+#VOLUME ${WORKDIR}
+#VOLUME ${PHOME}/.bash_history
 
 COPY --chown=root:root --chmod=0755 ./entrypoint.sh /
 ENTRYPOINT [ "/entrypoint.sh" ]
+CMD [ "tail", "-f", "/dev/null" ]
+
+USER root
+ENV OUID=${PUID}
+ENV DUID=${PUID}
+ENV DGID=
 
 LABEL org.opencontainers.image.source="https://github.com/ir1ka/docker-vim-ycm"
 LABEL org.opencontainers.image.description="vim with ycmd container image"

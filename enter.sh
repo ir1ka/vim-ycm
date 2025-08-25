@@ -2,4 +2,4 @@
 
 : "${NAME:=vim-ycm}"
 
-exec docker exec -it ${NAME} bash -c "exec -l bash"
+exec docker exec -it -u "$(id -u):$(id -g)" ${NAME} bash -c "exec -l bash"

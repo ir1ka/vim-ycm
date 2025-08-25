@@ -21,8 +21,9 @@ touch ${HOME}/.gitconfig
 exec docker run -d                                                              \
                 --restart unless-stopped                                        \
                 --init                                                          \
-                --env TERM=xterm-color                                          \
                 --env XDG_CONFIG_HOME="${WORKDIR}"                              \
+                --env DUID="$(id -u)"                                           \
+                --env DGID="$(id -g)"                                           \
                 --workdir "${WORKDIR}"                                          \
                 --volume "${HOME}":"${WORKDIR}"                                 \
                 --volume "${VIM_YCM_CONFIG}/bash_history":"${PHOME}/.bash_history" \
