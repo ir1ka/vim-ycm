@@ -7,12 +7,9 @@ ARG DISTRO
 ARG DEBIAN_FRONTEND=noninteractive
 
 # unminimize for support man-db
-RUN true                                                            \
-#    && sed -E -i 's/^(\s*Components:.*)$/\1 contrib non-free/g'     \
-#           /etc/apt/sources.list.d/${DISTRO}.sources                \
-#    && dpkg --add-architecture i386                                 \
-#    && dpkg --add-architecture arm64                                \
-    && apt-get update                                               \
+RUN --mount=type=cache,target=/root/.cache                          \
+    --mount=type=cache,target=/var/lib/apt                          \
+    apt-get update                                                  \
     && apt-get install -y --no-install-recommends                   \
 # apt utils and man-db \
         apt-utils man-db                                            \
@@ -69,25 +66,7 @@ RUN true                                                            \
         python3-distutils-extra python3-pyqt-distutils              \
         python3-distlib python3-pyelftools                          \
         dosfstools mtools swig                                      \
-        jq                                                          \
-# i386 runtime \
-#        libc6:i386 libstdc++6:i386 zlib1g:i386                      \
-# arm64 runtime \
-#        libc6:arm64 libstdc++6:arm64 zlib1g:arm64                   \
-# clean \
-    && apt-get clean                                                \
-    && rm -rf /var/lib/apt/lists/*                                  \
-              /var/tmp/*                                            \
-              /var/tmp/.[!.]*                                       \
-              /tmp/*                                                \
-              /tmp/.[!.]*                                           \
-              /root/.cache
-# restore bash completion for apt \
-#    && (dir=/etc/apt/apt.conf.d;                                    \
-#        [ -d $dir ] && sed -i 's/[[:space:]]*Dir::Cache::\(src\)\?pkgcache "";[[:space:]]*//g' $dir/*)  \
-# do not clean APT cache \
-#    && (f=/etc/apt/apt.conf.d/docker-clean;                         \
-#        [ -f $f ] && sed -i 's? /var/cache/apt/\*\.bin??g' $f)
+        jq
 
 ARG PUSER=coder
 ARG PUID=1000
@@ -107,7 +86,7 @@ RUN ( [ -z "${PGROUP}" ] || groupadd ${PGID:+--gid ${PGID}}         \
      else                                                           \
        useradd ${PGROUP:+--gid ${PGROUP} --no-user-group}           \
                ${PGROUPS:+--groups ${PGROUPS}}                      \
-               ${PUID:+--uid ${PUID} --non-unique}                  \
+               --uid ${PUID} --non-unique                           \
                --skel /et/skel                                      \
                --home-dir ${PHOME}                                  \
                --create-home                                        \
@@ -122,38 +101,39 @@ RUN ( [ -z "${PGROUP}" ] || groupadd ${PGID:+--gid ${PGID}}         \
 
 USER ${PUSER}
 
-RUN cp --preserve=mode,timestamps /etc/skel/.[!.]* ~/               \
+RUN --mount=type=bind,source=./cfg,target=/cfg,ro                   \
+    cp -a --no-preserve=ownership,links /cfg/. ~/
+
+RUN --mount=type=cache,target=/config/.cache,uid=${PUID}            \
+    cp --preserve=mode,timestamps /etc/skel/.[!.]* ~/               \
     && sed -E -i 's/^(\s*)#\s*(alias\s+)/\1\2/g' ~/.bashrc          \
-# clone \
-    && git clone https://github.com/ir1ka/vim-ycm.git               \
-           /tmp/vim-ycm                                             \
-    && (cd /tmp/vim-ycm/ && cp .vimrc home-cfg/.[!.]* ~/)           \
-    && rm -rf /tmp/vim-ycm                                          \
 # install vim plugin and compile ycm \
     && git clone https://github.com/VundleVim/Vundle.vim.git        \
            ~/.vim/bundle/Vundle.vim                                 \
     && echo "Vundle plugin installing ..."                          \
     && (yes '' | vim +PluginInstall +qall >/dev/null 2>&1)          \
     && (cd ~/.vim/bundle/YouCompleteMe && python3 install.py --all) \
-    && rm -rf ~/.cache                                              \
-# environments \
-    && for f in ~/.*-append; do                                     \
-        _f=${f%-append};                                            \
-        if [ -r "${f}" ]; then                                      \
-            if [ -w "${_f}" ]; then                                 \
-                cat "${f}" >> "${_f}";                              \
-            elif [ ! -e "${_f}" -a -w "${f%/*}" ]; then             \
-                cp "${f}" "${_f}";                                  \
-            fi;                                                     \
-        fi;                                                         \
-    done                                                            \
-    && rm -f ~/.*-append                                            \
 # python3 venv \
     && python3 -m venv ~/.venv                                      \
     && ~/.venv/bin/python3 -m pip install --no-cache-dir            \
         setuptools pyelftools pyqt-distutils distlib stdeb requests \
         distutils-extra-python                                      \
         compiledb
+
+RUN --mount=type=bind,source=./append,target=/append,ro             \
+# environments \
+    for f in /append/.*; do                                         \
+        _f=${f##*/};                                                \
+        if [ -r "${f}" ]; then                                      \
+            if [ -w ~/"${_f}" ]; then                               \
+                cat "${f}" >> ~/"${_f}";                            \
+            elif [ ! -e ~/"${_f}" ]; then                           \
+                cp "${f}" ~/"${_f}";                                \
+            else                                                    \
+                echo ~/"${_f}" exists but is not writable, IGNORE.; \
+            fi;                                                     \
+        fi;                                                         \
+    done
 
 ENV TERM=xterm-color
 ENV XDG_CONFIG_HOME=${WORKDIR}
