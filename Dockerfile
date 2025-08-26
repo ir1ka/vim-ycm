@@ -150,8 +150,8 @@ CMD [ "tail", "-f", "/dev/null" ]
 USER root
 ENV OUID=${PUID}
 ENV DUID=${PUID}
-ENV DGID=
+#ENV DGID=
 
-LABEL org.opencontainers.image.source="https://github.com/ir1ka/docker-vim-ycm"
+LABEL org.opencontainers.image.source="https://github.com/ir1ka/vim-ycm"
 LABEL org.opencontainers.image.description="vim with ycmd container image"
 LABEL org.opencontainers.image.licenses=MIT
