@@ -18,9 +18,8 @@ then
         usermod -u "${DUID}" "${DUSER}"
         [ -z "${DGID}" ] || groupmod -g "${DUID}" "${DGROUP}"
 
-        find "${DHOME}" -uid "${DUID}" -prune -o        \
-                        -uid "${OUID}"                  \
-                        -exec chown "${DUID}${DGID:+:${DGID}}" {} \;
+        find "${DHOME}" -uid "${OUID}"  \
+                        -exec chown "${DUID}${DGID:+:${DGID}}" {} +
     fi
 
     exec su -c 'exec "${SHELL}" "$0" "$@"'  \
