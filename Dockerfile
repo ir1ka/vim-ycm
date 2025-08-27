@@ -66,7 +66,7 @@ RUN --mount=type=cache,target=/root/.cache                          \
         python3-distutils-extra python3-pyqt-distutils              \
         python3-distlib python3-pyelftools                          \
         dosfstools mtools swig                                      \
-        jq
+        jq patchelf
 
 ARG PUSER=coder
 ARG PUID=1000
