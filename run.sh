@@ -4,6 +4,8 @@
 : "${WORKDIR:=${HOME}}"
 : "${PHOME=/config}"
 
+[ -n "${REGISTRY+x}" ] || REGISTRY=ghcr.io
+
 VIM_YCM_CONFIG="${WORKDIR}/.vim-ycm"
 
 if [ $# -gt 0 ]; then
@@ -32,4 +34,4 @@ exec docker run -d                                                              
                 --volume "${VIM_YCM_CONFIG}/undo_history":"${PHOME}/.undo_history" \
                 --hostname ${NAME}                                              \
                 --name ${NAME}                                                  \
-            ir1ka/vim-ycm${tag:+:${tag}} tail -f /dev/null
+            ${REGISTRY:+${REGISTRY}/}ir1ka/vim-ycm${tag:+:${tag}} tail -f /dev/null
