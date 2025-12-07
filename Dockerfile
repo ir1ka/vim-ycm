@@ -13,6 +13,7 @@ RUN --mount=type=cache,target=/root/.cache                          \
     && apt-get install -y --no-install-recommends                   \
 # apt utils and man-db \
         apt-utils man-db                                            \
+        manpages-dev \
         ubuntu-minimal                                              \
         unminimize                                                  \
     && (yes | unminimize)                                           \
