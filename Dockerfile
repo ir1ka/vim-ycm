@@ -119,7 +119,7 @@ RUN --mount=type=cache,target=/config/.cache,uid=${PUID}            \
     && ~/.venv/bin/python3 -m pip install --no-cache-dir            \
         setuptools pyelftools pyqt-distutils distlib stdeb requests \
         distutils-extra-python                                      \
-        compiledb
+        compiledb pre-commit
 
 RUN --mount=type=bind,source=./append,target=/append,ro             \
 # environments \
