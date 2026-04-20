@@ -58,7 +58,7 @@ RUN --mount=type=cache,target=/root/.cache                          \
 # qemu \
         libglib2.0-dev libpixman-1-dev libepoxy-dev                 \
 # tools \
-        moreutils                                                   \
+        xxd moreutils                                               \
         bash-completion iproute2 iputils-ping                       \
         subversion git-svn git-cvs exuberant-ctags cscope           \
         coreutils curl wget less file tree                          \
