@@ -39,7 +39,7 @@ RUN --mount=type=cache,target=/root/.cache                          \
 # cross armhf \
         gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf             \
 # cross mips64 \
-        gcc-mips64-linux-gnuabi64 g++-mips64-linux-gnuabi64         \
+#        gcc-mips64-linux-gnuabi64 g++-mips64-linux-gnuabi64         \
 # cross riscv \
         # with glibc \
         gcc-riscv64-linux-gnu g++-riscv64-linux-gnu                 \
@@ -58,7 +58,7 @@ RUN --mount=type=cache,target=/root/.cache                          \
 # qemu \
         libglib2.0-dev libpixman-1-dev libepoxy-dev                 \
 # tools \
-        xxd moreutils                                               \
+        xxd moreutils ripgrep                                       \
         bash-completion iproute2 iputils-ping                       \
         subversion git-svn git-cvs exuberant-ctags cscope           \
         coreutils curl wget less file tree                          \
